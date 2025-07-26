@@ -1,5 +1,6 @@
 import './globals.css';
 import { ReactNode } from 'react';
+import Header from '../components/layout/header';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
