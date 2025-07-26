@@ -6,6 +6,10 @@ export const API_ENDPOINTS = {
   
   // 콜백 수신
   CALLBACK: '/callback',
+
+  GET_ALL_SONGS : 'get-all-songs',
+
+  GET_SONGS: '/get-song',
 } as const;
 
 // Suno API 관련 설정

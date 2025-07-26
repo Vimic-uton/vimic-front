@@ -3,6 +3,17 @@
 type PlayViewProps = { id?: string };
 
 export default function PlayView({ id }: PlayViewProps) {
-  // id가 없을 때와 있을 때 모두 동작하도록 설계
-  return <div>Play {id ?? '(no id)'}</div>;
+  return (
+      <div className=" text-white p-8 pt-24">
+
+      <div className="relative z-20 max-w-7xl mx-auto">
+        {/* 제목 */}
+        <h1 className="text-2xl font-bodoni mb-8">Play</h1>
+
+
+        </div>
+        <div className="border-[1px] border-[#EDEDED] w-full h-[30vh]">
+      </div>
+    </div>
+  );
 }
