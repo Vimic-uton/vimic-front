@@ -86,6 +86,7 @@ export default function Create() {
           let lyrics = '';
           let imageUrl = '';
           
+          
           // 1. 최상위 레벨의 prompt 확인
           if (songResult.prompt) {
             lyrics = songResult.prompt;
@@ -93,7 +94,7 @@ export default function Create() {
           } else {
             // 2. song_info.response에서 확인 (null이 아닌 경우)
             const sunoData = songResult.song_info.response?.sunoData?.[0];
-            console.log('sunoData:', sunoData);
+            console.log('sunoData:', sunoData.imageUrl);
             
             if (sunoData?.prompt) {
               lyrics = sunoData.prompt;
@@ -161,7 +162,7 @@ export default function Create() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="">
           {/* 왼쪽: 입력 폼 */}
           <div className="space-y-8">
             {/* 곡 제목 입력 */}
@@ -235,42 +236,7 @@ export default function Create() {
               {isLoading ? '생성 중...' : '제작하기'}
             </button>
           </div>
-          
-          <div className="flex flex-col space-y-8">
-            {/* 표지 */}
-            <div>
-              <label className="block text-white mb-4">표지</label>
-              <div className="w-full h-[550px] border border-white/40 rounded-[10px] bg-transparent flex items-center justify-center overflow-hidden">
-                {coverImage ? (
-                  <img 
-                    src={coverImage} 
-                    alt="앨범 커버" 
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-white/60">
-                    {isLoading ? '표지 이미지 생성 중...' : '표지 이미지가 여기에 표시됩니다'}
-                  </span>
-                )}
-              </div>
-            </div>
 
-            {/* 가사 */}
-            <div>
-              <label className="block text-white mb-2">가사</label>
-              <div className="w-full h-[76px] border border-white/40 rounded-[30px] bg-transparent flex items-center justify-center p-4 overflow-y-auto">
-                {generatedLyrics ? (
-                  <span className="text-white text-sm whitespace-pre-wrap text-center">
-                    {generatedLyrics}
-                  </span>
-                ) : (
-                  <span className="text-white/60">
-                    {isLoading ? '가사 생성 중...' : '생성된 가사가 여기에 표시됩니다'}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

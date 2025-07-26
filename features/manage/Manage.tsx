@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
-import { API_ENDPOINTS, SUNO_API_CONFIG } from '@/api/endpoints';
+import { API_ENDPOINTS, API_CONFIG } from '@/api/endpoints';
 
 interface MusicItem {
   id: string;
@@ -29,24 +29,23 @@ export default function Manage() {
     setError(null);
     try {
       const res = await axios.get(
-        `${SUNO_API_CONFIG.BASE_URL}${API_ENDPOINTS.GET_ALL_SONGS}`
+        `${API_CONFIG.BASE_URL}${API_ENDPOINTS.GET_ALL_SONGS}`
       );
       console.log(res.data);
 
-      const songs = Array.isArray(res.data.songs)
-        ? res.data.songs.map((song: any) => {
-          const sunosibal = song.task_id;
+  const songs = Array.isArray(res.data.songs)
+    ? res.data.songs.map((song: any) => {
+        const suno = song.song_info?.sunoData?.[0] || {}; 
+        const sunoid = song.task_id || '';
 
-
-            const suno = song.song_info?.response?.sunoData?.[0] || {};
-            return {
-              id: sunosibal,
-              title: suno.title || '제목 없음',
-              duration: `${Math.round(suno.duration || 0)}s`,
-              thumbnail: suno.imageUrl || undefined,
-            };
-          })
-        : [];
+        return {
+          id: sunoid,
+          title: suno.title || '제목 없음',
+          duration: `${Math.round(suno.duration || 0)}s`,
+          thumbnail: suno.image_url || undefined,
+        };
+      })
+    : [];
 
       setMusicList(songs);
     } catch (err: any) {
