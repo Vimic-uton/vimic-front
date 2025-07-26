@@ -13,8 +13,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           rel="stylesheet"
         />
       </head>
-      <body className='overflow-hidden'>
-        <div className="min-h-screen ">{children}</div>
+      <body className=''>
+        <Header />
+        <div className="">{children}</div>
       </body>
     </html>
   );

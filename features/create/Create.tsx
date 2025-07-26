@@ -24,7 +24,7 @@ export default function Create() {
   };
 
       return (
-      <div className="min-h-screen bg-black text-white p-8 pt-24">
+      <div className=" text-white p-8 pt-24">
 
       <div className="relative z-20 max-w-7xl mx-auto">
         {/* 제목 */}
@@ -92,12 +92,11 @@ export default function Create() {
               제작하기
             </button>
           </div>
-
-          {/* 오른쪽: 미리보기 */}
-          <div className="space-y-6">
+          <div className='mt-[50vh]'>
+          <div className=" flex flex-col ">
             {/* 표지 */}
             <div>
-              <label className="block text-white mb-2">표지</label>
+              <label className="block text-white mb-4">표지</label>
               <div className="w-full h-[594px] border border-white/40 rounded-[10px] bg-transparent flex items-center justify-center">
                 <span className="text-white/60">표지 이미지가 여기에 표시됩니다</span>
               </div>
@@ -110,7 +109,9 @@ export default function Create() {
                 <span className="text-white/60">생성된 가사가 여기에 표시됩니다</span>
               </div>
             </div>
+          
           </div>
+        </div>
         </div>
       </div>
     </div>
