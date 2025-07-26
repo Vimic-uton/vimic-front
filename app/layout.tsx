@@ -1,5 +1,6 @@
 import './globals.css';
 import { ReactNode } from 'react';
+import Header from '../components/layout/header';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -12,8 +13,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           rel="stylesheet"
         />
       </head>
-      <body>
-        <div className="font-bodoni">{children}</div>
+      <body className="font-bodoni">
+        <Header />
+        {children}
       </body>
     </html>
   );
