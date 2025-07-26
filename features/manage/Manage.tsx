@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface MusicItem {
   id: string;
@@ -10,6 +11,8 @@ interface MusicItem {
 }
 
 export default function Manage() {
+
+  const router = useRouter();
   const [musicList, setMusicList] = useState<MusicItem[]>([
     { id: '1', title: '응디시티', duration: '5:23' },
     { id: '2', title: '패션시티', duration: '0:43' },
@@ -19,8 +22,12 @@ export default function Manage() {
     { id: '6', title: '대나무 행주', duration: '0:43' },
   ]);
 
+    const handleMusicClick = (id: string) => {
+    router.push(`/play/${id}`); 
+  };
+
   return (
-    <div className="min-h-screen bg-black text-white p-8 pt-32">
+    <div className="min-h-screen text-white p-8 pt-32">
       <div className="relative z-20 max-w-7xl mx-auto">
         {/* 제목 */}
         <h1 className="text-2xl font-bodoni mb-8">Manage</h1>
@@ -30,7 +37,7 @@ export default function Manage() {
           {musicList.map((music) => (
             <div key={music.id} className="group cursor-pointer">
               {/* 썸네일 */}
-              <div className="w-full h-[287px] border border-white/40 rounded-[20px] bg-transparent flex items-center justify-center mb-4 group-hover:border-white/60 transition-colors">
+              <div className="w-full h-[287px] border border-white/40 rounded-[20px] bg-transparent flex items-center justify-center mb-4 group-hover:border-white/60 transition-colors" onClick={()=>handleMusicClick(music.id)}>
                 {music.thumbnail ? (
                   <img 
                     src={music.thumbnail} 
