@@ -1,0 +1,5 @@
+import Create from '../../features/create/Create';
+
+export default function CreatePage() {
+  return <Create />;
+} 
