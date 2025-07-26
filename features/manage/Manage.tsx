@@ -35,9 +35,12 @@ export default function Manage() {
 
       const songs = Array.isArray(res.data.songs)
         ? res.data.songs.map((song: any) => {
+          const sunosibal = song.task_id;
+
+
             const suno = song.song_info?.response?.sunoData?.[0] || {};
             return {
-              id: suno.id || song.taskId,
+              id: sunosibal,
               title: suno.title || '제목 없음',
               duration: `${Math.round(suno.duration || 0)}s`,
               thumbnail: suno.imageUrl || undefined,
