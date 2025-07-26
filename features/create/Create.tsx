@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'; // Next.js의 useRouter 사용
 import { generateSong, pollSongStatus } from '../../api/client';
 import { GenerateSongRequest } from '../../shared/types/api.types';
 
@@ -14,12 +15,14 @@ export default function Create() {
   const [generatedLyrics, setGeneratedLyrics] = useState('');
   const [coverImage, setCoverImage] = useState('');
 
+  const router = useRouter(); // Next.js의 useRouter로 페이지 이동 구현
+
   const tags = [
-    { id: 'tiktok', label: '틱톡감성', selected: selectedTags.includes('tiktok') },
-    { id: 'funny', label: '병맛', selected: selectedTags.includes('funny') },
-    { id: 'comedy', label: '개그', selected: selectedTags.includes('comedy') },
-    { id: 'sad', label: '슬픔', selected: selectedTags.includes('sad') },
-    { id: 'horror', label: '공포', selected: selectedTags.includes('horror') }
+    { id: '틱톡', label: '틱톡감성', selected: selectedTags.includes('틱톡') },
+    { id: '병맛', label: '병맛', selected: selectedTags.includes('병맛') },
+    { id: '개그', label: '개그', selected: selectedTags.includes('개그') },
+    { id: '슬픔', label: '슬픔', selected: selectedTags.includes('슬픔') },
+    { id: '공포', label: '공포', selected: selectedTags.includes('공포') }
   ];
 
   const handleTagClick = (tagId: string) => {
@@ -63,91 +66,65 @@ export default function Create() {
         description: description.trim()
       };
 
-      console.log('노래 생성 요청 시작:', request);
-      setGeneratedLyrics('노래 생성 요청 중...');
-      
       const response = await generateSong(request);
-      console.log('노래 생성 응답:', response);
-      
       if (response.status === 'success' || response.status === 'pending') {
-        console.log('노래 생성 시작됨, task_id:', response.task_id);
-        setGeneratedLyrics(`노래가 생성 중입니다... (Task ID: ${response.task_id})`);
-        
-        // 폴링으로 완료 확인
-        console.log('폴링 시작...');
-        const songResult = await pollSongStatus(response.task_id, 30, 5000); // 5초마다 체크
-        console.log('폴링 완료, 결과:', songResult);
-        
+        const songResult = await pollSongStatus(response.task_id, 60, 5000); // 5초마다 체크
+
         if (songResult.status === 'complete' && songResult.song_info) {
-          console.log('전체 song_info:', songResult.song_info);
-          console.log('최상위 prompt:', songResult.prompt);
-          
-          // 가사 추출 - 최상위 레벨에서 먼저 확인
           let lyrics = '';
           let imageUrl = '';
-          
-          
-          // 1. 최상위 레벨의 prompt 확인
-          if (songResult.prompt) {
-            lyrics = songResult.prompt;
-            console.log('가사 추출 성공 (최상위 prompt):', lyrics);
-          } else {
-            // 2. song_info.response에서 확인 (null이 아닌 경우)
-            const sunoData = songResult.song_info.response?.sunoData?.[0];
-            console.log('sunoData:', sunoData.imageUrl);
-            
-            if (sunoData?.prompt) {
-              lyrics = sunoData.prompt;
-              console.log('가사 추출 성공 (sunoData.prompt):', lyrics);
-            } else if (sunoData?.response?.prompt) {
-              lyrics = sunoData.response.prompt;
-              console.log('가사 추출 성공 (sunoData.response.prompt):', lyrics);
-            } else {
-              console.warn('가사 데이터를 찾을 수 없습니다');
+
+          // response가 null인지 확인하고 처리
+          if (songResult.song_info.response) {
+            console.log('response 확인:', songResult.song_info.response);
+
+            // response 내부 데이터에서 필요한 정보 추출
+            const sunoData = songResult.song_info.response.sunoData?.[0];
+            if (sunoData) {
+              lyrics = sunoData.prompt || '';
+              imageUrl = sunoData.image_url || '';
             }
+          } else {
+            console.warn('song_info.response가 null입니다.');
           }
-          
-          // 표지 이미지 URL 추출 - song_info.response가 null이므로 다른 방법 필요
-          // 현재 API 응답 구조에서는 이미지 URL이 없는 것 같음
-          console.log('표지 이미지 URL 추출 시도...');
-          
-          // song_info.response가 null이므로 이미지 URL을 찾을 수 없음
-          if (!imageUrl) {
-            console.warn('표지 이미지 URL을 찾을 수 없습니다 (song_info.response가 null)');
-          }
-          
-          // 결과 설정
+
+          // 가사 설정
           if (lyrics) {
             setGeneratedLyrics(lyrics);
-            console.log('가사 설정 완료');
+            console.log('가사 설정 완료:', lyrics);
           } else {
-            console.warn('가사 데이터를 찾을 수 없습니다');
             setGeneratedLyrics('가사 생성 완료 (가사 데이터 없음)');
+            console.warn('가사 데이터를 찾을 수 없습니다.');
           }
-          
+
+          // 이미지 설정
           if (imageUrl) {
             setCoverImage(imageUrl);
             console.log('표지 이미지 설정 완료:', imageUrl);
           } else {
-            console.warn('표지 이미지 URL을 찾을 수 없습니다');
+            console.warn('표지 이미지 URL을 찾을 수 없습니다.');
           }
-          
-          console.log('노래 생성 완료!');
+
+          setIsLoading(false);
         } else {
-          console.error('노래 생성 실패:', songResult);
           setError('노래 생성에 실패했습니다. 다시 시도해주세요.');
         }
       } else {
-        console.error('노래 생성 요청 실패:', response);
         setError(response.message || '노래 생성에 실패했습니다.');
       }
     } catch (error) {
-      console.error('노래 생성 중 오류 발생:', error);
       setError(error instanceof Error ? error.message : '노래 생성 중 오류가 발생했습니다.');
     } finally {
       setIsLoading(false);
     }
   };
+
+  // 가사 생성 감지 및 페이지 이동
+  useEffect(() => {
+    if (generatedLyrics) {
+      router.push('/manage'); // 가사가 생성되면 /manage로 이동
+    }
+  }, [generatedLyrics, router]); // generatedLyrics와 router를 감지
 
   return (
     <div className="text-white p-8 pt-24">

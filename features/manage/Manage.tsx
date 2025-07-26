@@ -23,43 +23,47 @@ export default function Manage() {
     router.push(`/play/${id}`);
   };
 
-  useEffect(() => {
-  const fetchSongs = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await axios.get(
-        `${API_CONFIG.BASE_URL}${API_ENDPOINTS.GET_ALL_SONGS}`
-      );
-      console.log(res.data);
-
-  const songs = Array.isArray(res.data.songs)
-    ? res.data.songs.map((song: any) => {
-        const suno = song.song_info?.sunoData?.[0] || {}; 
-        const sunoid = song.task_id || '';
-
-        return {
-          id: sunoid,
-          title: suno.title || '제목 없음',
-          duration: `${Math.round(suno.duration || 0)}s`,
-          thumbnail: suno.image_url || undefined,
-        };
-      })
-    : [];
-
-      setMusicList(songs);
-    } catch (err: any) {
-      console.error(err);
-      setError(err?.message || '데이터를 불러오는 중 문제가 발생했습니다.');
-    } finally {
-      setLoading(false);
-    }
+  const handleDeleteClick = (id: string) => {
+    
+    router.push(`/about/${id}`);
+    
   };
 
-  fetchSongs();
-}, []);
+  useEffect(() => {
+    const fetchSongs = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await axios.get(
+          `${API_CONFIG.BASE_URL}${API_ENDPOINTS.GET_ALL_SONGS}`
+        );
+        console.log(res.data);
 
+        const songs = Array.isArray(res.data.songs)
+          ? res.data.songs.map((song: any) => {
+              const suno = song.song_info?.sunoData?.[0] || {};
+              const sunoid = song.task_id || '';
 
+              return {
+                id: sunoid,
+                title: suno.title || '제목 없음',
+                duration: `${Math.round(suno.duration || 0)}s`,
+                thumbnail: suno.image_url || undefined,
+              };
+            })
+          : [];
+
+        setMusicList(songs);
+      } catch (err: any) {
+        console.error(err);
+        setError(err?.message || '데이터를 불러오는 중 문제가 발생했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSongs();
+  }, []);
 
   return (
     <div className="min-h-screen text-white p-8 pt-32">
@@ -83,8 +87,7 @@ export default function Manage() {
             {musicList.map((music, index) => (
               <div
                 key={`${music.id}-${index}`}
-                className="group cursor-pointer"
-                onClick={() => handleMusicClick(music.id)}
+                className="group relative cursor-pointer"
               >
                 {/* 썸네일 */}
                 <div className="w-full h-[287px] border border-white/40 rounded-[20px] bg-transparent flex items-center justify-center mb-4 group-hover:border-white/60 transition-colors">
@@ -112,6 +115,21 @@ export default function Manage() {
                       <p className="text-sm">음악 썸네일</p>
                     </div>
                   )}
+                  {/* 호버 시 버튼 표시 */}
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-[20px]  h-[287px]">
+                    <button
+                      onClick={() => handleMusicClick(music.id)}
+                      className=" hover:bg-gray-500 text-white px-4 py-2 rounded-lg mx-2"
+                    >
+                      재생
+                    </button>
+                    <button
+                      onClick={() => handleDeleteClick(music.id)}
+                      className=" hover:bg-gray-500 text-white px-4 py-2 rounded-lg mx-2"
+                    >
+                      자세히
+                    </button>
+                  </div>
                 </div>
 
                 {/* 음악 정보 */}
@@ -142,7 +160,7 @@ export default function Manage() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={1}
-                  d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
+                  d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
                 />
               </svg>
             </div>

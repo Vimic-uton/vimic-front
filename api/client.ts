@@ -102,7 +102,6 @@ export async function getSong(request: GetSongRequest): Promise<GetSongResponse>
     throw error;
   }
 }
-
 /**
  * 노래 상태 폴링 (진행 중인 노래의 완료 여부 확인)
  * @param taskId 태스크 ID
@@ -112,7 +111,7 @@ export async function getSong(request: GetSongRequest): Promise<GetSongResponse>
  */
 export async function pollSongStatus(
   taskId: string, 
-  maxAttempts: number = 30, 
+  maxAttempts: number = 60, 
   interval: number = 10000
 ): Promise<GetSongResponse> {
   let attempts = 0;
@@ -125,10 +124,17 @@ export async function pollSongStatus(
       const response = await getSong({ task_id: taskId });
       
       console.log(`폴링 응답 상태: ${response.status}`, response);
-      
-      if (response.status === 'complete') {
-        console.log('노래 생성 완료됨!');
-        return response;
+
+      // song_info와 sunoData가 존재하는지 확인
+      if (response.song_info?.sunoData && Array.isArray(response.song_info.sunoData)) {
+        const sunoData = response.song_info.sunoData[0];
+        
+        if (sunoData?.prompt) {
+          console.log('가사 생성 완료:', sunoData.prompt);
+          return response; // 성공적으로 데이터를 반환
+        }
+      } else {
+        console.warn('sunoData가 존재하지 않거나 빈 배열입니다.');
       }
       
       if (response.status === 'error') {
@@ -158,6 +164,7 @@ export async function pollSongStatus(
   console.error('폴링 루프 종료 - 시간 초과');
   throw new Error('노래 생성이 시간 초과되었습니다.');
 }
+
 
 /**
  * 오디오 파일 다운로드

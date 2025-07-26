@@ -187,7 +187,7 @@ export default function PlayView({ id }: PlayViewProps) {
 
         <button
               onClick={togglePlay}
-              className="p-4 rounded-full border-[1px] mt-[3vh]"
+              className="p-4 rounded-full border-[1px] mt-[3vh] focus-none outline-none"
             >
               {isPlaying ? <Pause className="text-white w-6 h-6" /> : <Play className="text-white w-6 h-6" />}
             </button>

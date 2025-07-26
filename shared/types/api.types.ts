@@ -17,6 +17,7 @@ export interface GenerateSongResponse {
 
 // 노래 정보 타입
 export interface SongInfo {
+  sunoData: any;
   taskId: string;
   parentMusicId: string;
   param: string;
@@ -36,6 +37,7 @@ export interface SongInfo {
 
 // Suno 데이터 타입
 export interface SunoData {
+  image_url: any;
   id: string;
   audioUrl: string;
   sourceAudioUrl: string;
@@ -74,6 +76,7 @@ export interface GetSongRequest {
 
 // 특정 노래 조회 응답 타입
 export interface GetSongResponse {
+  response: any;
   status: 'complete' | 'pending' | 'error';
   task_id: string;
   prompt?: string; // 최상위 레벨에 prompt가 있을 수 있음
