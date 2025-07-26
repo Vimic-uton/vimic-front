@@ -12,8 +12,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           rel="stylesheet"
         />
       </head>
-      <body>
-        <div className="font-bodoni">{children}</div>
+      <body className='overflow-hidden'>
+        <div className="min-h-screen ">{children}</div>
       </body>
     </html>
   );
