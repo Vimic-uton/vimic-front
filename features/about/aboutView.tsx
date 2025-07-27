@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS, API_CONFIG } from '@/api/endpoints';
+import { downloadAudio } from '../../api/client';
 
 type aboutwProps = { id?: string };
 
@@ -110,7 +111,17 @@ export default function AboutView({ id }: aboutwProps) {
       </div>
 
       <div className='mr-[20vh] flex flex-col gap-[10vh]'>
-        <div className='w-[50vh] h-[auto] '>
+        <div className=''><button onClick={() => {
+          
+      if (music?.sourceAudioUrl) {
+        console.log(music?.sourceAudioUrl),
+        downloadAudio(music.sourceAudioUrl);
+      } else {
+        alert('오디오 URL이 없습니다.');
+      }
+    }}
+  >다운로드</button></div>
+        <div className='w-[50vh] h-[auto] mt-[-8vh] '>
             <img src={music?.thumbnail} alt="" className='w-[100%] h-[auto] rounded-[5vh]'/>
         </div>
         <div className="max-h-40 overflow-y-auto whitespace-pre-wrap text-sm   rounded-lg w-full max-w-2xl text-center">

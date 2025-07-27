@@ -167,19 +167,34 @@ export async function pollSongStatus(
 
 
 /**
- * 오디오 파일 다운로드
+ * 오디오 파일 다운로드 및 저장
  * @param audioUrl 오디오 파일 URL
- * @returns Promise<ArrayBuffer>
+ * @param fileName 저장할 파일 이름
  */
-export async function downloadAudio(audioUrl: string): Promise<ArrayBuffer> {
+export async function downloadAudio(audioUrl: string, fileName: string = 'audio.mp3'): Promise<void> {
   try {
     const response = await fetch(audioUrl);
-    
+
     if (!response.ok) {
       throw new Error(`오디오 파일 다운로드 실패: ${response.status}`);
     }
 
-    return await response.arrayBuffer();
+    // ArrayBuffer를 Blob으로 변환
+    const blob = await response.blob();
+
+    // Blob을 URL로 변환
+    const url = URL.createObjectURL(blob);
+
+    // <a> 태그를 생성하여 다운로드 트리거
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+
+    // 다운로드가 끝난 후 <a> 태그 제거 및 URL 해제
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   } catch (error) {
     console.error('오디오 파일 다운로드 중 오류 발생:', error);
     throw error;
